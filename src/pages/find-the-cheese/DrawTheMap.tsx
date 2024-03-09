@@ -26,6 +26,103 @@ const DrawTheMap = () => {
     location.reload();
   };
 
+  const dfsRunner = (mapNumber: number) => {
+    try {
+      if (isGoal(mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1])) {
+        goLeft(mapNumber, [currPostion[0], currPostion[1]], 'left');
+        return
+      }
+
+      if (isPath(mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1])) {
+        goLeft(mapNumber, [currPostion[0], currPostion[1]], 'left');
+        return
+      }
+    } catch (e) {
+      console.log(e); //isOutOfBound
+    }
+
+    try {
+      if (isGoal(mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]])) {
+        goDown(mapNumber, [currPostion[0], currPostion[1]], 'down');
+        return
+      }
+
+      if (isPath(mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]])) {
+        goDown(mapNumber, [currPostion[0], currPostion[1]], 'down');
+        return
+      }
+    } catch (e) {
+      console.log(e); //isOutOfBound
+    }
+
+    try {
+      if (isGoal(mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1])) {
+        goRight(mapNumber, [currPostion[0], currPostion[1]], 'right');
+        return
+      }
+
+      if (isPath(mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1])) {
+        goRight(mapNumber, [currPostion[0], currPostion[1]], 'right');
+        return
+      }
+    } catch (e) {
+      console.log(e); //isOutOfBound
+    }
+
+    try {
+      if (isGoal(mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]])) {
+        goUp(mapNumber, [currPostion[0], currPostion[1]], 'up');
+        return
+      }
+      if (isPath(mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]])) {
+        goUp(mapNumber, [currPostion[0], currPostion[1]], 'up');
+        return
+      }
+    } catch (e) {
+      console.log(e); //isOutOfBound
+    }
+
+    //Try Reverse and go up
+    try {
+      if (isCorrect(mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]])) {
+        goUp(mapNumber, [currPostion[0], currPostion[1]], 'up');
+        return
+      }
+    } catch (e) {
+      console.log(e); //isOutOfBound
+    }
+
+    //Try Reverse and go right
+    try {
+      if (isCorrect(mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1])) {
+        goRight(mapNumber, [currPostion[0], currPostion[1]], 'right');
+        return
+      }
+    } catch (e) {
+      console.log(e); //isOutOfBound
+    }
+
+    //Try Reverse back and go down
+    try {
+      if (isCorrect(mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]])) {
+        goDown(mapNumber, [currPostion[0], currPostion[1]], 'down');
+        return
+      }
+    } catch (e) {
+      console.log(e); //isOutOfBound
+    }
+
+    //Try Reverse and go left
+    try {
+      if (isCorrect(mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1])) {
+        goLeft(mapNumber, [currPostion[0], currPostion[1]], 'left');
+        return
+      }
+    } catch (e) {
+      console.log(e); //isOutOfBound
+    }
+  };
+
   //Function to draw the block element
   const draw = (el: String) => {
     switch (el) {
@@ -133,6 +230,13 @@ const DrawTheMap = () => {
     return false;
   };
 
+  const isPath = (targetElement: any) => {
+    if (targetElement === 'path') {
+      return true;
+    }
+    return false;
+  };
+
   const isWrong = (targetElement: any) => {
     if (targetElement === 'wrong') {
       return true;
@@ -192,10 +296,6 @@ const DrawTheMap = () => {
 
     //Condition C: see if next leftly block is a wall or correct (breadcrumb)
     try {
-      console.log(
-        'isWall C:',
-        mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1]
-      );
       if (isWall(mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1])) {
         conditionC = true;
       }
@@ -248,7 +348,8 @@ const DrawTheMap = () => {
   const swap = (
     isDeadEnd: boolean,
     originalElement: any,
-    targetElement: any
+    targetElement: any,
+    action: String
   ) => {
     let tempElement = originalElement;
     originalElement = targetElement;
@@ -257,7 +358,9 @@ const DrawTheMap = () => {
 
     console.log('=== isDeadEnd: ===', isDeadEnd);
     if (isDeadEnd) {
-      originalElement = 'wrong';
+      if (action === 'reverse') {
+        originalElement = 'wrong';
+      }
     } else originalElement = 'correct';
 
     return [originalElement, targetElement];
@@ -301,15 +404,30 @@ const DrawTheMap = () => {
       mazeArray[mapNumber][currPostion[0]][currPostion[1]] = 'start';
     }
 
-    let swapResult = swap(
-      isDeadEnd(mapNumber, [currPostion[0], currPostion[1]]),
-      mazeArray[mapNumber][currPostion[0]][currPostion[1]],
-      mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]]
-    );
+    //Validation: isDeadEnd
+    if (isDeadEnd(mapNumber, [currPostion[0], currPostion[1]])) {
+      let swapResult = swap(
+        isDeadEnd(mapNumber, [currPostion[0], currPostion[1]]),
+        mazeArray[mapNumber][currPostion[0]][currPostion[1]],
+        mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]],
+        'reverse'
+      );
 
-    //assign value
-    mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
-    mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]] = swapResult[1];
+      //assign value
+      mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
+      mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]] = swapResult[1];
+    } else {
+      let swapResult = swap(
+        isDeadEnd(mapNumber, [currPostion[0], currPostion[1]]),
+        mazeArray[mapNumber][currPostion[0]][currPostion[1]],
+        mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]],
+        'forward'
+      );
+
+      //assign value
+      mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
+      mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]] = swapResult[1];
+    }
 
     //update mice position
     console.log('mice position: ', indexOf2d(mazeArray[mapNumber], 'start'));
@@ -335,15 +453,30 @@ const DrawTheMap = () => {
       mazeArray[mapNumber][currPostion[0]][currPostion[1]] = 'start';
     }
 
-    let swapResult = swap(
-      isDeadEnd(mapNumber, [currPostion[0], currPostion[1]]),
-      mazeArray[mapNumber][currPostion[0]][currPostion[1]],
-      mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1]
-    );
+    //Validation: isDeadEnd
+    if (isDeadEnd(mapNumber, [currPostion[0], currPostion[1]])) {
+      let swapResult = swap(
+        isDeadEnd(mapNumber, [currPostion[0], currPostion[1]]),
+        mazeArray[mapNumber][currPostion[0]][currPostion[1]],
+        mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1],
+        'reverse'
+      );
 
-    //assign value
-    mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
-    mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1] = swapResult[1];
+      //assign value
+      mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
+      mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1] = swapResult[1];
+    } else {
+      let swapResult = swap(
+        isDeadEnd(mapNumber, [currPostion[0], currPostion[1]]),
+        mazeArray[mapNumber][currPostion[0]][currPostion[1]],
+        mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1],
+        'forward'
+      );
+
+      //assign value
+      mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
+      mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1] = swapResult[1];
+    }
 
     //update mice position
     console.log('mice position: ', indexOf2d(mazeArray[mapNumber], 'start'));
@@ -373,15 +506,30 @@ const DrawTheMap = () => {
       mazeArray[mapNumber][currPostion[0]][currPostion[1]] = 'start';
     }
 
-    let swapResult = swap(
-      isDeadEnd(mapNumber, [currPostion[0], currPostion[1]]),
-      mazeArray[mapNumber][currPostion[0]][currPostion[1]],
-      mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1]
-    );
+    //Validation: isDeadEnd
+    if (isDeadEnd(mapNumber, [currPostion[0], currPostion[1]])) {
+      let swapResult = swap(
+        isDeadEnd(mapNumber, [currPostion[0], currPostion[1]]),
+        mazeArray[mapNumber][currPostion[0]][currPostion[1]],
+        mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1],
+        'reverse'
+      );
 
-    //assign value
-    mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
-    mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1] = swapResult[1];
+      //assign value
+      mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
+      mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1] = swapResult[1];
+    } else {
+      let swapResult = swap(
+        isDeadEnd(mapNumber, [currPostion[0], currPostion[1]]),
+        mazeArray[mapNumber][currPostion[0]][currPostion[1]],
+        mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1],
+        'forward'
+      );
+
+      //assign value
+      mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
+      mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1] = swapResult[1];
+    }
 
     //update mice position
     console.log('mice position: ', indexOf2d(mazeArray[mapNumber], 'start'));
@@ -407,15 +555,30 @@ const DrawTheMap = () => {
       mazeArray[mapNumber][currPostion[0]][currPostion[1]] = 'start';
     }
 
-    let swapResult = swap(
-      isDeadEnd(mapNumber, [currPostion[0], currPostion[1]]),
-      mazeArray[mapNumber][currPostion[0]][currPostion[1]],
-      mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]]
-    );
+    //Validation: isDeadEnd
+    if (isDeadEnd(mapNumber, [currPostion[0], currPostion[1]])) {
+      let swapResult = swap(
+        isDeadEnd(mapNumber, [currPostion[0], currPostion[1]]),
+        mazeArray[mapNumber][currPostion[0]][currPostion[1]],
+        mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]],
+        'reverse'
+      );
 
-    //assign value
-    mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
-    mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]] = swapResult[1];
+      //assign value
+      mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
+      mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]] = swapResult[1];
+    } else {
+      let swapResult = swap(
+        isDeadEnd(mapNumber, [currPostion[0], currPostion[1]]),
+        mazeArray[mapNumber][currPostion[0]][currPostion[1]],
+        mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]],
+        'forward'
+      );
+
+      //assign value
+      mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
+      mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]] = swapResult[1];
+    }
 
     //update mice position
     console.log('mice position: ', indexOf2d(mazeArray[mapNumber], 'start'));
@@ -436,6 +599,12 @@ const DrawTheMap = () => {
   const arrowKeyButtonsGenerator = (runningMapIndex: number) => {
     return (
       <>
+        <button
+          className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+          onClick={() => dfsRunner(runningMapIndex)}
+        >
+          DFS Runner
+        </button>
         <button
           className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
           onClick={() =>
