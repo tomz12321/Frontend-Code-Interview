@@ -7,10 +7,18 @@ const DrawTheMap = () => {
   const [mazeArray, setData] = useState<any[]>([])
   const [isLoading, setLoading] = useState(true)
   const [isStarted, setIsStarted] = useState(false);
+  const [recordPositionX, setRecordPositionX] = useState(0)
+  const [recordPositionY, setRecordPositionY] = useState(0)
 
   //Function to handle button clicked
   const handleClickStart = () => {
     setIsStarted(!isStarted)
+    setRecordPositionX(currPostion[0])
+    setRecordPositionY(currPostion[1])
+  }
+
+  const handleClickReset = () => {
+    location.reload();
   }
 
   //Function to draw the block element
@@ -20,13 +28,13 @@ const DrawTheMap = () => {
         return <div className='bg-green-800 md:w-16 md:h-16'></div>
       break;
       case 'path':
-        return <div className='bg-black-100 md:w-16 md:h-16'></div>
-      break;
-      case 'correct':
         return <div className='bg-lime-50 md:w-16 md:h-16'></div>
       break;
+      case 'correct':
+        return <div className='bg-amber-200 md:w-16 md:h-16'></div>
+      break;
       case 'wrong':
-        return <div className='bg-white md:w-16 md:h-16'></div>
+        return <div className='bg-lime-50 md:w-16 md:h-16'></div>
       break;
       case 'start':
         return <div className='bg-neutral-500'>
@@ -70,7 +78,7 @@ const DrawTheMap = () => {
         <div className="w-full">
           {isStarted 
             ?
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full" onClick={()=>handleClickStart()}>
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full" onClick={()=>handleClickReset()}>
                 {`Reset ${buttonNumber}`}
               </button>
             : 
@@ -95,17 +103,125 @@ const DrawTheMap = () => {
       })
   }
 
+  const swap = (originalElement: any, targetElement: any) => {
+    let tempElement = originalElement;
+    originalElement = targetElement 
+    targetElement = tempElement
+    console.log(originalElement, targetElement)
+
+    return [originalElement, targetElement]
+  }
+
+  const indexOf2d = (arr: any[], val: string) => {
+    var index = [-1, -1];
+    if (!Array.isArray(arr)) {
+        return index;
+    }
+    arr.some(function (sub, posX) {
+        if (!Array.isArray(sub)) {
+            return false;
+        }
+        var posY = sub.indexOf(val);
+        if (posY !== -1) {
+            index[0] = posX;
+            index[1] = posY;
+            return true;
+        }
+        return false;
+    });
+
+    return index;
+  }
+
+  const goDown = (currPostion: (number)[], action: string) => {
+    let swapResult = swap(mazeArray[0][currPostion[0]][currPostion[1]],mazeArray[0][currPostion[0]+1][currPostion[1]])
+
+    //assign value
+    mazeArray[0][currPostion[0]][currPostion[1]] = swapResult[0];
+    mazeArray[0][currPostion[0]+1][currPostion[1]] = swapResult[1];
+
+    //update mice position
+    console.log('mice position: ', indexOf2d (mazeArray[0], 'start'))
+
+    setRecordPositionX(currPostion[0]+1)
+    setRecordPositionY(currPostion[1])
+  }
+
+  const goLeft = (currPostion: (number)[], action: string) => {
+    let swapResult = swap(mazeArray[0][currPostion[0]][currPostion[1]],mazeArray[0][currPostion[0]][currPostion[1]-1])
+
+    //assign value
+    mazeArray[0][currPostion[0]][currPostion[1]] = swapResult[0];
+    mazeArray[0][currPostion[0]][currPostion[1]-1] = swapResult[1];
+
+    //update mice position
+    console.log('mice position: ', indexOf2d (mazeArray[0], 'start'))
+
+    setRecordPositionX(currPostion[0])
+    setRecordPositionY(currPostion[1]-1)
+  }
+
+  const goRight = (currPostion: (number)[], action: string) => {
+    let swapResult = swap(mazeArray[0][currPostion[0]][currPostion[1]],mazeArray[0][currPostion[0]][currPostion[1]+1])
+
+    //assign value
+    mazeArray[0][currPostion[0]][currPostion[1]] = swapResult[0];
+    mazeArray[0][currPostion[0]][currPostion[1]+1] = swapResult[1];
+
+    //update mice position
+    console.log('mice position: ', indexOf2d (mazeArray[0], 'start'))
+
+    setRecordPositionX(currPostion[0])
+    setRecordPositionY(currPostion[1]+1)
+  }
+
+  const goUp = (currPostion: (number)[], action: string) => {
+    let swapResult = swap(mazeArray[0][currPostion[0]][currPostion[1]],mazeArray[0][currPostion[0]-1][currPostion[1]])
+
+    //assign value
+    mazeArray[0][currPostion[0]][currPostion[1]] = swapResult[0];
+    mazeArray[0][currPostion[0]-1][currPostion[1]] = swapResult[1];
+
+    //update mice position
+    console.log('mice position: ', indexOf2d (mazeArray[0], 'start'))
+
+    setRecordPositionX(currPostion[0]-1)
+    setRecordPositionY(currPostion[1])
+  }
+
   useEffect(() => {
     dataFetch()
   }, [])
  
+  let startPostion = indexOf2d (mazeArray[0], 'start')
+  let currPostion = indexOf2d (mazeArray[0], 'start')
+
   if (isLoading) return <p>Loading...</p>
   if (!mazeArray) return <p>No profile data</p>
+
+  console.log('startPostion', startPostion)
+  console.log('currPostion', currPostion)
+
+  console.log('recordMicePostion', recordPositionX, recordPositionY)
 
   return (
     <>
       <div className="p-4 max-w-[720px] mx-auto bg-white rounded shadow">
       
+        {/* Arrow Key Buttons */}
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={()=>goUp(currPostion, 'up')}>
+          Up
+        </button>
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={()=>goDown([recordPositionX, recordPositionY], 'down')}>
+          Down
+        </button>
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={()=>goLeft(currPostion, 'left')}>
+          Left
+        </button>
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={()=>goRight([recordPositionX, recordPositionY], 'right')}>
+          Right
+        </button>
+
         {/* Map1 */}
         {[0,1,2,3,4,5,6,7].map((eleY) => {return lineDrawer(0,eleY)})}
         {generateButton(1)}
