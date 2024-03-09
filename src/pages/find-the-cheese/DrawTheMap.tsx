@@ -1,101 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image'
+import axios from 'axios'
 
 const DrawTheMap = () => {
 
+  const [mazeArray, setData] = useState<any[]>([])
+  const [isLoading, setLoading] = useState(true)
   const [isStarted, setIsStarted] = useState(false);
-
-  //Test Data
-  const mazeArray = [
-    [
-      ['wall', 'start', 'wall', 'wall', 'wall', 'wall', 'wall'],
-      ['wall', 'path', 'path', 'path', 'path', 'path', 'wall'],
-      ['wall', 'wall', 'wall', 'wall', 'wall', 'path', 'wall'],
-      ['wall', 'path', 'path', 'path', 'path', 'path', 'wall'],
-      ['wall', 'path', 'wall', 'path', 'wall', 'wall', 'wall'],
-      ['wall', 'path', 'wall', 'path', 'path', 'path', 'wall'],
-      ['wall', 'path', 'wall', 'path', 'wall', 'path', 'end'],
-      ['wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall']
-    ],
-    [
-      ['wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'end', 'wall'],
-      ['wall', 'path', 'path', 'wall', 'path', 'path', 'path', 'wall'],
-      ['wall', 'path', 'wall', 'path', 'wall', 'wall', 'path', 'wall'],
-      ['wall', 'path', 'path', 'path', 'path', 'path', 'path', 'wall'],
-      ['wall', 'path', 'wall', 'wall', 'path', 'wall', 'path', 'wall'],
-      ['wall', 'path', 'wall', 'path', 'wall', 'path', 'wall', 'wall'],
-      ['wall', 'path', 'path', 'path', 'path', 'path', 'path', 'wall'],
-      ['wall', 'path', 'wall', 'wall', 'path', 'wall', 'path', 'wall'],
-      ['wall', 'path', 'wall', 'path', 'wall', 'path', 'wall', 'wall'],
-      ['wall', 'path', 'path', 'path', 'path', 'path', 'path', 'wall'],
-      ['start', 'path', 'wall', 'wall', 'path', 'wall', 'path', 'wall'],
-      ['wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall']
-    ],
-    [
-      ['wall', 'wall', 'wall', 'wall', 'start', 'wall', 'wall', 'wall', 'wall'],
-      ['wall', 'path', 'path', 'path', 'path', 'path', 'path', 'path', 'wall'],
-      ['wall', 'path', 'wall', 'wall', 'wall', 'wall', 'wall', 'path', 'wall'],
-      ['wall', 'path', 'wall', 'path', 'wall', 'path', 'path', 'path', 'wall'],
-      ['wall', 'path', 'wall', 'path', 'path', 'path', 'wall', 'path', 'wall'],
-      ['wall', 'path', 'wall', 'wall', 'wall', 'wall', 'wall', 'path', 'wall'],
-      ['wall', 'path', 'wall', 'path', 'path', 'path', 'wall', 'path', 'wall'],
-      ['wall', 'path', 'path', 'path', 'wall', 'wall', 'wall', 'path', 'wall'],
-      ['wall', 'path', 'wall', 'wall', 'path', 'path', 'path', 'path', 'wall'],
-      ['wall', 'path', 'path', 'wall', 'path', 'wall', 'wall', 'path', 'wall'],
-      ['wall', 'wall', 'wall', 'wall', 'end', 'wall', 'wall', 'wall', 'wall']
-    ],
-    [
-      ['wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall'],
-      ['start', 'path', 'wall', 'path', 'path', 'path', 'wall', 'path', 'path', 'wall'],
-      ['wall', 'path', 'wall', 'path', 'wall', 'path', 'wall', 'wall', 'path', 'wall'],
-      ['wall', 'path', 'path', 'path', 'wall', 'path', 'path', 'path', 'path', 'end'],
-      ['wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall']
-    ],
-    [
-      ['wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall'],
-      ['wall', 'path', 'path', 'path', 'path', 'path', 'path', 'path', 'path', 'path', 'wall'],
-      ['wall', 'wall', 'wall', 'path', 'wall', 'wall', 'wall', 'wall', 'wall', 'path', 'end'],
-      ['wall', 'path', 'path', 'path', 'wall', 'path', 'wall', 'path', 'wall', 'wall', 'wall'],
-      ['wall', 'path', 'wall', 'path', 'path', 'path', 'path', 'path', 'path', 'path', 'wall'],
-      ['wall', 'path', 'path', 'path', 'wall', 'path', 'wall', 'wall', 'wall', 'path', 'wall'],
-      ['wall', 'wall', 'wall', 'wall', 'path', 'path', 'path', 'path', 'path', 'path', 'wall'],
-      ['wall', 'path', 'path', 'wall', 'wall', 'wall', 'wall', 'path', 'wall', 'wall', 'wall'],
-      ['wall', 'wall', 'path', 'wall', 'path', 'path', 'wall', 'path', 'path', 'path', 'wall'],
-      ['wall', 'path', 'path', 'path', 'wall', 'path', 'wall', 'path', 'wall', 'path', 'wall'],
-      ['start', 'path', 'wall', 'path', 'wall', 'path', 'path', 'path', 'wall', 'path', 'wall'],
-      ['wall', 'path', 'wall', 'path', 'path', 'path', 'wall', 'wall', 'wall', 'path', 'wall'],
-      ['wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall']
-    ],
-    [
-      ['wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'end', 'wall', 'wall'],
-      ['wall', 'path', 'path', 'path', 'path', 'path', 'path', 'wall', 'path', 'path', 'path', 'wall'],
-      ['wall', 'wall', 'path', 'wall', 'path', 'wall', 'path', 'path', 'path', 'wall', 'path', 'wall'],
-      ['wall', 'path', 'path', 'wall', 'path', 'path', 'wall', 'wall', 'wall', 'wall', 'path', 'wall'],
-      ['wall', 'path', 'wall', 'wall', 'path', 'wall', 'wall', 'path', 'wall', 'path', 'path', 'wall'],
-      ['wall', 'path', 'path', 'wall', 'wall', 'wall', 'wall', 'path', 'path', 'path', 'wall', 'wall'],
-      ['wall', 'wall', 'path', 'wall', 'path', 'wall', 'path', 'path', 'wall', 'path', 'path', 'wall'],
-      ['wall', 'wall', 'wall', 'wall', 'path', 'wall', 'wall', 'wall', 'wall', 'wall', 'path', 'wall'],
-      ['wall', 'path', 'path', 'path', 'path', 'wall', 'path', 'path', 'path', 'wall', 'path', 'wall'],
-      ['wall', 'wall', 'path', 'wall', 'path', 'path', 'path', 'wall', 'path', 'path', 'path', 'wall'],
-      ['wall', 'wall', 'start', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall']
-    ],
-    [
-      ['wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall'],
-      ['start', 'path', 'path', 'path', 'path', 'path', 'path', 'wall', 'path', 'wall', 'wall', 'path', 'wall'],
-      ['wall', 'wall', 'wall', 'wall', 'wall', 'path', 'wall', 'wall', 'path', 'path', 'wall', 'path', 'wall'],
-      ['wall', 'path', 'wall', 'path', 'wall', 'path', 'path', 'path', 'wall', 'path', 'path', 'path', 'wall'],
-      ['wall', 'path', 'wall', 'path', 'wall', 'path', 'wall', 'path', 'path', 'path', 'wall', 'path', 'wall'],
-      ['wall', 'path', 'path', 'path', 'path', 'path', 'wall', 'path', 'wall', 'path', 'wall', 'path', 'wall'],
-      ['wall', 'wall', 'path', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'path', 'path', 'wall'],
-      ['wall', 'path', 'path', 'wall', 'path', 'path', 'path', 'wall', 'path', 'wall', 'path', 'wall', 'wall'],
-      ['wall', 'wall', 'path', 'path', 'path', 'wall', 'path', 'path', 'path', 'wall', 'path', 'path', 'wall'],
-      ['wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'path', 'wall'],
-      ['wall', 'path', 'path', 'path', 'path', 'path', 'path', 'path', 'path', 'wall', 'path', 'path', 'wall'],
-      ['wall', 'wall', 'path', 'wall', 'wall', 'path', 'wall', 'wall', 'path', 'wall', 'path', 'wall', 'wall'],
-      ['wall', 'path', 'path', 'path', 'wall', 'path', 'path', 'wall', 'path', 'path', 'path', 'path', 'wall'],
-      ['wall', 'wall', 'wall', 'wall', 'wall', 'wall', 'end', 'wall', 'wall', 'wall', 'wall', 'wall', 'wall']
-    ]
-  ];
 
   //Function to handle button clicked
   const handleClickStart = () => {
@@ -172,7 +83,24 @@ const DrawTheMap = () => {
     </>)
   }
 
-  useEffect
+  //Function to dataFetch
+  const dataFetch = async () => {
+    await axios.get('/api/maze')
+      .then((response) => {
+        setData(response.data)
+        setLoading(false)
+      })
+      .catch(error => {
+        console.error('error: data fetching error', error.message)
+      })
+  }
+
+  useEffect(() => {
+    dataFetch()
+  }, [])
+ 
+  if (isLoading) return <p>Loading...</p>
+  if (!mazeArray) return <p>No profile data</p>
 
   return (
     <>
