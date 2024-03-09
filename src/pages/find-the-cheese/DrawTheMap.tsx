@@ -19,7 +19,7 @@ const DrawTheMap = () => {
 
     setRecordPositionX(currPostion[0]);
     setRecordPositionY(currPostion[1]);
-    setRunningMapIndex(runningMapIndex)
+    setRunningMapIndex(runningMapIndex);
   };
 
   const handleClickReset = () => {
@@ -229,7 +229,11 @@ const DrawTheMap = () => {
     setRecordPositionY(currPostion[1] - 1);
   };
 
-  const goRight = (mapNumber:number, currPostion: number[], action: string) => {
+  const goRight = (
+    mapNumber: number,
+    currPostion: number[],
+    action: string
+  ) => {
     //Validation: isOutOfBound() and isWall()
     try {
       if (isWall(mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1])) {
@@ -295,10 +299,61 @@ const DrawTheMap = () => {
     setRecordPositionY(currPostion[1]);
   };
 
+  const arrayGenerator = (maxLength: number) => {
+    let createdArray = [];
+    for (let i = 0; i < maxLength; i++) {
+      createdArray.push(i);
+    }
+
+    return createdArray;
+  };
+
+  const arrowKeyButtonsGenerator = (runningMapIndex: number) => {
+    return (
+      <>
+        <button
+          className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+          onClick={() =>
+            goUp(runningMapIndex, [recordPositionX, recordPositionY], 'up')
+          }
+        >
+          Up
+        </button>
+        <button
+          className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+          onClick={() =>
+            goDown(runningMapIndex, [recordPositionX, recordPositionY], 'down')
+          }
+        >
+          Down
+        </button>
+        <button
+          className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+          onClick={() =>
+            goLeft(runningMapIndex, [recordPositionX, recordPositionY], 'left')
+          }
+        >
+          Left
+        </button>
+        <button
+          className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+          onClick={() =>
+            goRight(
+              runningMapIndex,
+              [recordPositionX, recordPositionY],
+              'right'
+            )
+          }
+        >
+          Right
+        </button>
+      </>
+    );
+  };
+
   useEffect(() => {
     dataFetch();
   }, []);
-
 
   if (isLoading) return <p>Loading...</p>;
   if (!mazeArray) return <p>No profile data</p>;
@@ -310,117 +365,84 @@ const DrawTheMap = () => {
   console.log('currPostion', currPostion);
 
   console.log('recordMicePostion', recordPositionX, recordPositionY);
-  console.log('runningMapIndex', runningMapIndex)
+  console.log('runningMapIndex', runningMapIndex);
 
   return (
     <>
       <div className='p-4 max-w-[720px] mx-auto bg-white rounded shadow'>
         {/* Arrow Key Buttons */}
-        {isStarted && runningMapIndex === 0 ? (
-          <>
-            <button
-              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-              onClick={() => goUp(runningMapIndex, [recordPositionX, recordPositionY], 'up')}
-            >
-              Up
-            </button>
-            <button
-              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-              onClick={() => goDown(runningMapIndex, [recordPositionX, recordPositionY], 'down')}
-            >
-              Down
-            </button>
-            <button
-              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-              onClick={() => goLeft(runningMapIndex, [recordPositionX, recordPositionY], 'left')}
-            >
-              Left
-            </button>
-            <button
-              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-              onClick={() =>
-                goRight(runningMapIndex, [recordPositionX, recordPositionY], 'right')
-              }
-            >
-              Right
-            </button>
-          </>
-        ) : null}
+        {isStarted && runningMapIndex === 0
+          ? arrowKeyButtonsGenerator(0)
+          : null}
 
         {/* Map1 */}
-        {[0, 1, 2, 3, 4, 5, 6, 7].map((eleY) => {
+        {arrayGenerator(8).map((eleY) => {
           return lineDrawer(0, eleY);
         })}
         {generateButton(1)}
         <hr />
 
-        {isStarted && runningMapIndex === 1 ? (
-          <>
-            <button
-              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-              onClick={() => goUp(runningMapIndex, [recordPositionX, recordPositionY], 'up')}
-            >
-              Up
-            </button>
-            <button
-              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-              onClick={() => goDown(runningMapIndex, [recordPositionX, recordPositionY], 'down')}
-            >
-              Down
-            </button>
-            <button
-              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-              onClick={() => goLeft(runningMapIndex, [recordPositionX, recordPositionY], 'left')}
-            >
-              Left
-            </button>
-            <button
-              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-              onClick={() =>
-                goRight(runningMapIndex, [recordPositionX, recordPositionY], 'right')
-              }
-            >
-              Right
-            </button>
-          </>
-        ) : null}
+        {/* Arrow Key Buttons */}
+        {isStarted && runningMapIndex === 1
+          ? arrowKeyButtonsGenerator(1)
+          : null}
         {/* Map2 */}
-        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((eleY) => {
+        {arrayGenerator(12).map((eleY) => {
           return lineDrawer(1, eleY);
         })}
         {generateButton(2)}
         <hr />
 
+        {/* Arrow Key Buttons */}
+        {isStarted && runningMapIndex === 2
+          ? arrowKeyButtonsGenerator(2)
+          : null}
         {/* Map3 */}
-        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((eleY) => {
+        {arrayGenerator(11).map((eleY) => {
           return lineDrawer(2, eleY);
         })}
         {generateButton(3)}
         <hr />
 
+        {/* Arrow Key Buttons */}
+        {isStarted && runningMapIndex === 3
+          ? arrowKeyButtonsGenerator(3)
+          : null}
         {/* Map4 */}
-        {[0, 1, 2, 3, 4].map((eleY) => {
+        {arrayGenerator(5).map((eleY) => {
           return lineDrawer(3, eleY);
         })}
         {generateButton(4)}
         <hr />
 
+        {/* Arrow Key Buttons */}
+        {isStarted && runningMapIndex === 4
+          ? arrowKeyButtonsGenerator(4)
+          : null}
         {/* Map5 */}
-        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((eleY) => {
+        {arrayGenerator(13).map((eleY) => {
           return lineDrawer(4, eleY);
         })}
         {generateButton(5)}
         <hr />
 
+        {/* Arrow Key Buttons */}
+        {isStarted && runningMapIndex === 5
+          ? arrowKeyButtonsGenerator(5)
+          : null}
         {/* Map6 */}
-        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((eleY) => {
+        {arrayGenerator(11).map((eleY) => {
           return lineDrawer(5, eleY);
         })}
         {generateButton(6)}
         <hr />
 
+        {/* Arrow Key Buttons */}
+        {isStarted && runningMapIndex === 6
+          ? arrowKeyButtonsGenerator(6)
+          : null}
         {/* Map7 */}
-        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map((eleY) => {
+        {arrayGenerator(14).map((eleY) => {
           return lineDrawer(6, eleY);
         })}
         {generateButton(7)}
