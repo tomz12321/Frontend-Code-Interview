@@ -39,7 +39,7 @@ const DrawTheMap = () => {
         return <div className='bg-amber-200 md:w-16 md:h-16'></div>;
         break;
       case 'wrong':
-        return <div className='bg-lime-50 md:w-16 md:h-16'></div>;
+        return <div className='bg-black md:w-16 md:h-16'></div>;
         break;
       case 'start':
         return (
@@ -133,15 +133,132 @@ const DrawTheMap = () => {
     return false;
   };
 
-  const swap = (correct: boolean, originalElement: any, targetElement: any) => {
+  const isWrong = (targetElement: any) => {
+    if (targetElement === 'wrong') {
+      return true;
+    }
+    return false;
+  };
+
+  const isCorrect = (targetElement: any) => {
+    if (targetElement === 'correct') {
+      return true;
+    }
+    return false;
+  };
+
+  //Function of isDeadEnd Detector
+  const isDeadEnd = (mapNumber: number, currPostion: number[]) => {
+    let conditionA = false;
+    let conditionB = false;
+    let conditionC = false;
+    let conditionD = false;
+
+    //Condition A: see if next block downwards is a wall or correct (breadcrumb)
+    try {
+      if (isWall(mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]])) {
+        conditionA = true;
+      }
+
+      if (isWrong(mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]])) {
+        conditionA = true;
+      }
+
+      if (isCorrect(mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]])) {
+        conditionA = true;
+      }
+    } catch (e) {
+      console.log(e);
+      return (conditionA = true); //isOutOfBound
+    }
+
+    //Condition B: see if next block upwards is a wall or correct (breadcrumb)
+    try {
+      if (isWall(mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]])) {
+        conditionB = true;
+      }
+
+      if (isWrong(mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]])) {
+        conditionB = true;
+      }
+
+      if (isCorrect(mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]])) {
+        conditionB = true;
+      }
+    } catch (e) {
+      console.log(e);
+      conditionB = true; //isOutOfBound
+    }
+
+    //Condition C: see if next leftly block is a wall or correct (breadcrumb)
+    try {
+      console.log(
+        'isWall C:',
+        mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1]
+      );
+      if (isWall(mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1])) {
+        conditionC = true;
+      }
+
+      if (isWrong(mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1])) {
+        conditionC = true;
+      }
+
+      if (isCorrect(mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1])) {
+        conditionC = true;
+      }
+    } catch (e) {
+      console.log(e);
+      conditionC = true; //isOutOfBound
+    }
+
+    //Condition D: see if next rightly block is a wall or correct (breadcrumb)
+    try {
+      if (isWall(mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1])) {
+        conditionD = true;
+      }
+
+      if (isWrong(mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1])) {
+        conditionD = true;
+      }
+
+      if (isCorrect(mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1])) {
+        conditionD = true;
+      }
+    } catch (e) {
+      console.log(e);
+      conditionD = true; //isOutOfBound
+    }
+
+    console.log(
+      'conditionA && conditionB && conditionC && conditionD:',
+      conditionA && conditionB && conditionC && conditionD
+    );
+    console.log('conditionA: ', conditionA);
+    console.log('conditionB: ', conditionB);
+    console.log('conditionC: ', conditionC);
+    console.log('conditionD: ', conditionD);
+    if (conditionA && conditionB && conditionC && conditionD) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const swap = (
+    isDeadEnd: boolean,
+    originalElement: any,
+    targetElement: any
+  ) => {
     let tempElement = originalElement;
     originalElement = targetElement;
     targetElement = tempElement;
     console.log(originalElement, targetElement);
 
-    if (correct) {
-      originalElement = 'correct';
-    } else originalElement = 'path';
+    console.log('=== isDeadEnd: ===', isDeadEnd);
+    if (isDeadEnd) {
+      originalElement = 'wrong';
+    } else originalElement = 'correct';
 
     return [originalElement, targetElement];
   };
@@ -185,7 +302,7 @@ const DrawTheMap = () => {
     }
 
     let swapResult = swap(
-      true,
+      isDeadEnd(mapNumber, [currPostion[0], currPostion[1]]),
       mazeArray[mapNumber][currPostion[0]][currPostion[1]],
       mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]]
     );
@@ -219,7 +336,7 @@ const DrawTheMap = () => {
     }
 
     let swapResult = swap(
-      true,
+      isDeadEnd(mapNumber, [currPostion[0], currPostion[1]]),
       mazeArray[mapNumber][currPostion[0]][currPostion[1]],
       mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1]
     );
@@ -257,7 +374,7 @@ const DrawTheMap = () => {
     }
 
     let swapResult = swap(
-      true,
+      isDeadEnd(mapNumber, [currPostion[0], currPostion[1]]),
       mazeArray[mapNumber][currPostion[0]][currPostion[1]],
       mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1]
     );
@@ -291,7 +408,7 @@ const DrawTheMap = () => {
     }
 
     let swapResult = swap(
-      true,
+      isDeadEnd(mapNumber, [currPostion[0], currPostion[1]]),
       mazeArray[mapNumber][currPostion[0]][currPostion[1]],
       mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]]
     );
