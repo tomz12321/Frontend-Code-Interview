@@ -8,12 +8,18 @@ const DrawTheMap = () => {
   const [isStarted, setIsStarted] = useState(false);
   const [recordPositionX, setRecordPositionX] = useState(0);
   const [recordPositionY, setRecordPositionY] = useState(0);
+  const [runningMapIndex, setRunningMapIndex] = useState(0);
 
   //Function to handle button clicked
-  const handleClickStart = () => {
+  const handleClickStart = (runningMapIndex: number) => {
     setIsStarted(!isStarted);
+
+    //Reset Current Position at start
+    let currPostion = indexOf2d(mazeArray[runningMapIndex], 'start');
+
     setRecordPositionX(currPostion[0]);
     setRecordPositionY(currPostion[1]);
+    setRunningMapIndex(runningMapIndex)
   };
 
   const handleClickReset = () => {
@@ -86,7 +92,7 @@ const DrawTheMap = () => {
             ) : (
               <button
                 className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full'
-                onClick={() => handleClickStart()}
+                onClick={() => handleClickStart(buttonNumber - 1)}
               >
                 {`Start ${buttonNumber}`}
               </button>
@@ -157,10 +163,10 @@ const DrawTheMap = () => {
     return index;
   };
 
-  const goDown = (currPostion: number[], action: string) => {
+  const goDown = (mapNumber: number, currPostion: number[], action: string) => {
     //Validation: isOutOfBound() and isWall()
     try {
-      if (isWall(mazeArray[0][currPostion[0] + 1][currPostion[1]])) {
+      if (isWall(mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]])) {
         return;
       }
     } catch (e) {
@@ -169,31 +175,31 @@ const DrawTheMap = () => {
     }
 
     //Validation: isGoal()
-    if (isGoal(mazeArray[0][currPostion[0] + 1][currPostion[1]])) {
-      mazeArray[0][currPostion[0] + 1][currPostion[1]] = 'path';
-      mazeArray[0][currPostion[0]][currPostion[1]] = 'start';
+    if (isGoal(mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]])) {
+      mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]] = 'path';
+      mazeArray[mapNumber][currPostion[0]][currPostion[1]] = 'start';
     }
 
     let swapResult = swap(
-      mazeArray[0][currPostion[0]][currPostion[1]],
-      mazeArray[0][currPostion[0] + 1][currPostion[1]]
+      mazeArray[mapNumber][currPostion[0]][currPostion[1]],
+      mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]]
     );
 
     //assign value
-    mazeArray[0][currPostion[0]][currPostion[1]] = swapResult[0];
-    mazeArray[0][currPostion[0] + 1][currPostion[1]] = swapResult[1];
+    mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
+    mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]] = swapResult[1];
 
     //update mice position
-    console.log('mice position: ', indexOf2d(mazeArray[0], 'start'));
+    console.log('mice position: ', indexOf2d(mazeArray[mapNumber], 'start'));
 
     setRecordPositionX(currPostion[0] + 1);
     setRecordPositionY(currPostion[1]);
   };
 
-  const goLeft = (currPostion: number[], action: string) => {
+  const goLeft = (mapNumber: number, currPostion: number[], action: string) => {
     //Validation: isOutOfBound() and isWall()
     try {
-      if (isWall(mazeArray[0][currPostion[0]][currPostion[1] - 1])) {
+      if (isWall(mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1])) {
         return;
       }
     } catch (e) {
@@ -202,31 +208,31 @@ const DrawTheMap = () => {
     }
 
     //Validation: isGoal()
-    if (isGoal(mazeArray[0][currPostion[0]][currPostion[1] - 1])) {
-      mazeArray[0][currPostion[0]][currPostion[1] - 1] = 'path';
-      mazeArray[0][currPostion[0]][currPostion[1]] = 'start';
+    if (isGoal(mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1])) {
+      mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1] = 'path';
+      mazeArray[mapNumber][currPostion[0]][currPostion[1]] = 'start';
     }
 
     let swapResult = swap(
-      mazeArray[0][currPostion[0]][currPostion[1]],
-      mazeArray[0][currPostion[0]][currPostion[1] - 1]
+      mazeArray[mapNumber][currPostion[0]][currPostion[1]],
+      mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1]
     );
 
     //assign value
-    mazeArray[0][currPostion[0]][currPostion[1]] = swapResult[0];
-    mazeArray[0][currPostion[0]][currPostion[1] - 1] = swapResult[1];
+    mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
+    mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1] = swapResult[1];
 
     //update mice position
-    console.log('mice position: ', indexOf2d(mazeArray[0], 'start'));
+    console.log('mice position: ', indexOf2d(mazeArray[mapNumber], 'start'));
 
     setRecordPositionX(currPostion[0]);
     setRecordPositionY(currPostion[1] - 1);
   };
 
-  const goRight = (currPostion: number[], action: string) => {
+  const goRight = (mapNumber:number, currPostion: number[], action: string) => {
     //Validation: isOutOfBound() and isWall()
     try {
-      if (isWall(mazeArray[0][currPostion[0]][currPostion[1] + 1])) {
+      if (isWall(mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1])) {
         return;
       }
     } catch (e) {
@@ -235,32 +241,31 @@ const DrawTheMap = () => {
     }
 
     //Validation: isGoal()
-    if (isGoal(mazeArray[0][currPostion[0]][currPostion[1] + 1])) {
-      console.log('run here!!!');
-      mazeArray[0][currPostion[0]][currPostion[1] + 1] = 'path';
-      mazeArray[0][currPostion[0]][currPostion[1]] = 'start';
+    if (isGoal(mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1])) {
+      mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1] = 'path';
+      mazeArray[mapNumber][currPostion[0]][currPostion[1]] = 'start';
     }
 
     let swapResult = swap(
-      mazeArray[0][currPostion[0]][currPostion[1]],
-      mazeArray[0][currPostion[0]][currPostion[1] + 1]
+      mazeArray[mapNumber][currPostion[0]][currPostion[1]],
+      mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1]
     );
 
     //assign value
-    mazeArray[0][currPostion[0]][currPostion[1]] = swapResult[0];
-    mazeArray[0][currPostion[0]][currPostion[1] + 1] = swapResult[1];
+    mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
+    mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1] = swapResult[1];
 
     //update mice position
-    console.log('mice position: ', indexOf2d(mazeArray[0], 'start'));
+    console.log('mice position: ', indexOf2d(mazeArray[mapNumber], 'start'));
 
     setRecordPositionX(currPostion[0]);
     setRecordPositionY(currPostion[1] + 1);
   };
 
-  const goUp = (currPostion: number[], action: string) => {
+  const goUp = (mapNumber: number, currPostion: number[], action: string) => {
     //Validation: isOutOfBound() and isWall()
     try {
-      if (isWall(mazeArray[0][currPostion[0] - 1][currPostion[1]])) {
+      if (isWall(mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]])) {
         return;
       }
     } catch (e) {
@@ -269,22 +274,22 @@ const DrawTheMap = () => {
     }
 
     //Validation: isGoal()
-    if (isGoal(mazeArray[0][currPostion[0] - 1][currPostion[1]])) {
-      mazeArray[0][currPostion[0] - 1][currPostion[1]] = 'path';
-      mazeArray[0][currPostion[0]][currPostion[1]] = 'start';
+    if (isGoal(mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]])) {
+      mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]] = 'path';
+      mazeArray[mapNumber][currPostion[0]][currPostion[1]] = 'start';
     }
 
     let swapResult = swap(
-      mazeArray[0][currPostion[0]][currPostion[1]],
-      mazeArray[0][currPostion[0] - 1][currPostion[1]]
+      mazeArray[mapNumber][currPostion[0]][currPostion[1]],
+      mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]]
     );
 
     //assign value
-    mazeArray[0][currPostion[0]][currPostion[1]] = swapResult[0];
-    mazeArray[0][currPostion[0] - 1][currPostion[1]] = swapResult[1];
+    mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
+    mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]] = swapResult[1];
 
     //update mice position
-    console.log('mice position: ', indexOf2d(mazeArray[0], 'start'));
+    console.log('mice position: ', indexOf2d(mazeArray[mapNumber], 'start'));
 
     setRecordPositionX(currPostion[0] - 1);
     setRecordPositionY(currPostion[1]);
@@ -294,45 +299,47 @@ const DrawTheMap = () => {
     dataFetch();
   }, []);
 
-  let startPostion = indexOf2d(mazeArray[0], 'start');
-  let currPostion = indexOf2d(mazeArray[0], 'start');
 
   if (isLoading) return <p>Loading...</p>;
   if (!mazeArray) return <p>No profile data</p>;
+
+  let startPostion = indexOf2d(mazeArray[runningMapIndex], 'start');
+  let currPostion = indexOf2d(mazeArray[runningMapIndex], 'start');
 
   console.log('startPostion', startPostion);
   console.log('currPostion', currPostion);
 
   console.log('recordMicePostion', recordPositionX, recordPositionY);
+  console.log('runningMapIndex', runningMapIndex)
 
   return (
     <>
       <div className='p-4 max-w-[720px] mx-auto bg-white rounded shadow'>
         {/* Arrow Key Buttons */}
-        {isStarted ? (
+        {isStarted && runningMapIndex === 0 ? (
           <>
             <button
               className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-              onClick={() => goUp(currPostion, 'up')}
+              onClick={() => goUp(runningMapIndex, [recordPositionX, recordPositionY], 'up')}
             >
               Up
             </button>
             <button
               className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-              onClick={() => goDown([recordPositionX, recordPositionY], 'down')}
+              onClick={() => goDown(runningMapIndex, [recordPositionX, recordPositionY], 'down')}
             >
               Down
             </button>
             <button
               className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-              onClick={() => goLeft(currPostion, 'left')}
+              onClick={() => goLeft(runningMapIndex, [recordPositionX, recordPositionY], 'left')}
             >
               Left
             </button>
             <button
               className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
               onClick={() =>
-                goRight([recordPositionX, recordPositionY], 'right')
+                goRight(runningMapIndex, [recordPositionX, recordPositionY], 'right')
               }
             >
               Right
@@ -347,6 +354,36 @@ const DrawTheMap = () => {
         {generateButton(1)}
         <hr />
 
+        {isStarted && runningMapIndex === 1 ? (
+          <>
+            <button
+              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+              onClick={() => goUp(runningMapIndex, [recordPositionX, recordPositionY], 'up')}
+            >
+              Up
+            </button>
+            <button
+              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+              onClick={() => goDown(runningMapIndex, [recordPositionX, recordPositionY], 'down')}
+            >
+              Down
+            </button>
+            <button
+              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+              onClick={() => goLeft(runningMapIndex, [recordPositionX, recordPositionY], 'left')}
+            >
+              Left
+            </button>
+            <button
+              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+              onClick={() =>
+                goRight(runningMapIndex, [recordPositionX, recordPositionY], 'right')
+              }
+            >
+              Right
+            </button>
+          </>
+        ) : null}
         {/* Map2 */}
         {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((eleY) => {
           return lineDrawer(1, eleY);
