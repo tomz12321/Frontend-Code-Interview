@@ -133,11 +133,15 @@ const DrawTheMap = () => {
     return false;
   };
 
-  const swap = (originalElement: any, targetElement: any) => {
+  const swap = (correct: boolean, originalElement: any, targetElement: any) => {
     let tempElement = originalElement;
     originalElement = targetElement;
     targetElement = tempElement;
     console.log(originalElement, targetElement);
+
+    if (correct) {
+      originalElement = 'correct';
+    } else originalElement = 'path';
 
     return [originalElement, targetElement];
   };
@@ -181,6 +185,7 @@ const DrawTheMap = () => {
     }
 
     let swapResult = swap(
+      true,
       mazeArray[mapNumber][currPostion[0]][currPostion[1]],
       mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]]
     );
@@ -214,6 +219,7 @@ const DrawTheMap = () => {
     }
 
     let swapResult = swap(
+      true,
       mazeArray[mapNumber][currPostion[0]][currPostion[1]],
       mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1]
     );
@@ -251,6 +257,7 @@ const DrawTheMap = () => {
     }
 
     let swapResult = swap(
+      true,
       mazeArray[mapNumber][currPostion[0]][currPostion[1]],
       mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1]
     );
@@ -284,6 +291,7 @@ const DrawTheMap = () => {
     }
 
     let swapResult = swap(
+      true,
       mazeArray[mapNumber][currPostion[0]][currPostion[1]],
       mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]]
     );
