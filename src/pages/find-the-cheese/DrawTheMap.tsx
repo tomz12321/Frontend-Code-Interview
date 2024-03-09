@@ -118,6 +118,15 @@ const DrawTheMap = () => {
     return false;
   };
 
+  const isGoal = (targetElement: any) => {
+    if (targetElement === 'end') {
+      console.log('== Congratulations! ==');
+      setIsStarted(!isStarted);
+      return true;
+    }
+    return false;
+  };
+
   const swap = (originalElement: any, targetElement: any) => {
     let tempElement = originalElement;
     originalElement = targetElement;
@@ -159,6 +168,12 @@ const DrawTheMap = () => {
       return;
     }
 
+    //Validation: isGoal()
+    if (isGoal(mazeArray[0][currPostion[0] + 1][currPostion[1]])) {
+      mazeArray[0][currPostion[0] + 1][currPostion[1]] = 'path';
+      mazeArray[0][currPostion[0]][currPostion[1]] = 'start';
+    }
+
     let swapResult = swap(
       mazeArray[0][currPostion[0]][currPostion[1]],
       mazeArray[0][currPostion[0] + 1][currPostion[1]]
@@ -185,6 +200,13 @@ const DrawTheMap = () => {
       console.log(e);
       return;
     }
+
+    //Validation: isGoal()
+    if (isGoal(mazeArray[0][currPostion[0]][currPostion[1] - 1])) {
+      mazeArray[0][currPostion[0]][currPostion[1] - 1] = 'path';
+      mazeArray[0][currPostion[0]][currPostion[1]] = 'start';
+    }
+
     let swapResult = swap(
       mazeArray[0][currPostion[0]][currPostion[1]],
       mazeArray[0][currPostion[0]][currPostion[1] - 1]
@@ -211,6 +233,14 @@ const DrawTheMap = () => {
       console.log(e);
       return;
     }
+
+    //Validation: isGoal()
+    if (isGoal(mazeArray[0][currPostion[0]][currPostion[1] + 1])) {
+      console.log('run here!!!');
+      mazeArray[0][currPostion[0]][currPostion[1] + 1] = 'path';
+      mazeArray[0][currPostion[0]][currPostion[1]] = 'start';
+    }
+
     let swapResult = swap(
       mazeArray[0][currPostion[0]][currPostion[1]],
       mazeArray[0][currPostion[0]][currPostion[1] + 1]
@@ -237,6 +267,13 @@ const DrawTheMap = () => {
       console.log(e);
       return;
     }
+
+    //Validation: isGoal()
+    if (isGoal(mazeArray[0][currPostion[0] - 1][currPostion[1]])) {
+      mazeArray[0][currPostion[0] - 1][currPostion[1]] = 'path';
+      mazeArray[0][currPostion[0]][currPostion[1]] = 'start';
+    }
+
     let swapResult = swap(
       mazeArray[0][currPostion[0]][currPostion[1]],
       mazeArray[0][currPostion[0] - 1][currPostion[1]]
@@ -273,27 +310,35 @@ const DrawTheMap = () => {
       <div className='p-4 max-w-[720px] mx-auto bg-white rounded shadow'>
         {/* Arrow Key Buttons */}
         {isStarted ? (
-        <><button
-            className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-            onClick={() => goUp(currPostion, 'up')}
-          >
-            Up
-          </button><button
-            className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-            onClick={() => goDown([recordPositionX, recordPositionY], 'down')}
-          >
+          <>
+            <button
+              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+              onClick={() => goUp(currPostion, 'up')}
+            >
+              Up
+            </button>
+            <button
+              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+              onClick={() => goDown([recordPositionX, recordPositionY], 'down')}
+            >
               Down
-            </button><button
+            </button>
+            <button
               className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
               onClick={() => goLeft(currPostion, 'left')}
             >
               Left
-            </button><button
+            </button>
+            <button
               className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-              onClick={() => goRight([recordPositionX, recordPositionY], 'right')}
+              onClick={() =>
+                goRight([recordPositionX, recordPositionY], 'right')
+              }
             >
               Right
-            </button></>) : null}
+            </button>
+          </>
+        ) : null}
 
         {/* Map1 */}
         {[0, 1, 2, 3, 4, 5, 6, 7].map((eleY) => {
