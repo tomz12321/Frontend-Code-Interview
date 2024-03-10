@@ -271,7 +271,7 @@ const DrawTheMap = () => {
       }
     } catch (e) {
       console.log(e);
-      return (conditionA = true); //isOutOfBound
+      conditionA = true; //isOutOfBound
     }
 
     //Condition B: see if next block upwards is a wall or correct (breadcrumb)
@@ -581,42 +581,6 @@ const DrawTheMap = () => {
           onMouseEnter={() => dfsRunner(runningMapIndex)}
         >
           DFS Runner
-        </button>
-        <button
-          className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-          onClick={() =>
-            goUp(runningMapIndex, [recordPositionX, recordPositionY], 'up')
-          }
-        >
-          Up
-        </button>
-        <button
-          className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-          onClick={() =>
-            goDown(runningMapIndex, [recordPositionX, recordPositionY], 'down')
-          }
-        >
-          Down
-        </button>
-        <button
-          className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-          onClick={() =>
-            goLeft(runningMapIndex, [recordPositionX, recordPositionY], 'left')
-          }
-        >
-          Left
-        </button>
-        <button
-          className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-          onClick={() =>
-            goRight(
-              runningMapIndex,
-              [recordPositionX, recordPositionY],
-              'right'
-            )
-          }
-        >
-          Right
         </button>
       </>
     );
