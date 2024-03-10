@@ -215,7 +215,6 @@ const DrawTheMap = () => {
 
   const isWall = (targetElement: any) => {
     if (targetElement === 'wall') {
-      console.log('== The mice hit the wall! ==');
       return true;
     }
     return false;
@@ -223,7 +222,6 @@ const DrawTheMap = () => {
 
   const isGoal = (targetElement: any) => {
     if (targetElement === 'end') {
-      console.log('== Congratulations! ==');
       setIsStarted(!isStarted);
       return true;
     }
@@ -330,14 +328,6 @@ const DrawTheMap = () => {
       conditionD = true; //isOutOfBound
     }
 
-    console.log(
-      'conditionA && conditionB && conditionC && conditionD:',
-      conditionA && conditionB && conditionC && conditionD
-    );
-    console.log('conditionA: ', conditionA);
-    console.log('conditionB: ', conditionB);
-    console.log('conditionC: ', conditionC);
-    console.log('conditionD: ', conditionD);
     if (conditionA && conditionB && conditionC && conditionD) {
       return true;
     } else {
@@ -354,9 +344,7 @@ const DrawTheMap = () => {
     let tempElement = originalElement;
     originalElement = targetElement;
     targetElement = tempElement;
-    console.log(originalElement, targetElement);
 
-    console.log('=== isDeadEnd: ===', isDeadEnd);
     if (isDeadEnd) {
       if (action === 'reverse') {
         originalElement = 'wrong';
@@ -429,9 +417,6 @@ const DrawTheMap = () => {
       mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]] = swapResult[1];
     }
 
-    //update mice position
-    console.log('mice position: ', indexOf2d(mazeArray[mapNumber], 'start'));
-
     setRecordPositionX(currPostion[0] + 1);
     setRecordPositionY(currPostion[1]);
   };
@@ -477,9 +462,6 @@ const DrawTheMap = () => {
       mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
       mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1] = swapResult[1];
     }
-
-    //update mice position
-    console.log('mice position: ', indexOf2d(mazeArray[mapNumber], 'start'));
 
     setRecordPositionX(currPostion[0]);
     setRecordPositionY(currPostion[1] - 1);
@@ -531,8 +513,6 @@ const DrawTheMap = () => {
       mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1] = swapResult[1];
     }
 
-    //update mice position
-    console.log('mice position: ', indexOf2d(mazeArray[mapNumber], 'start'));
 
     setRecordPositionX(currPostion[0]);
     setRecordPositionY(currPostion[1] + 1);
@@ -580,9 +560,6 @@ const DrawTheMap = () => {
       mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]] = swapResult[1];
     }
 
-    //update mice position
-    console.log('mice position: ', indexOf2d(mazeArray[mapNumber], 'start'));
-
     setRecordPositionX(currPostion[0] - 1);
     setRecordPositionY(currPostion[1]);
   };
@@ -601,7 +578,7 @@ const DrawTheMap = () => {
       <>
         <button
           className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-          onClick={() => dfsRunner(runningMapIndex)}
+          onMouseEnter={() => dfsRunner(runningMapIndex)}
         >
           DFS Runner
         </button>
@@ -652,14 +629,7 @@ const DrawTheMap = () => {
   if (isLoading) return <p>Loading...</p>;
   if (!mazeArray) return <p>No profile data</p>;
 
-  let startPostion = indexOf2d(mazeArray[runningMapIndex], 'start');
   let currPostion = indexOf2d(mazeArray[runningMapIndex], 'start');
-
-  console.log('startPostion', startPostion);
-  console.log('currPostion', currPostion);
-
-  console.log('recordMicePostion', recordPositionX, recordPositionY);
-  console.log('runningMapIndex', runningMapIndex);
 
   return (
     <>
