@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { getData, arrayGenerator, lineDrawer, indexOf2d } from '@/utils';
+import {
+  getData,
+  arrayGenerator,
+  lineDrawer,
+  isWall,
+  isPath,
+  isWrong,
+  isCorrect,
+  indexOf2d,
+  swap
+} from '@/utils';
 
 const GameBoard = () => {
   const [mazeArray, setData] = useState<any[]>([]);
@@ -37,37 +47,9 @@ const GameBoard = () => {
       });
   };
 
-  const isWall = (targetElement: any) => {
-    if (targetElement === 'wall') {
-      return true;
-    }
-    return false;
-  };
-
   const isGoal = (targetElement: any) => {
     if (targetElement === 'end') {
       setIsStarted(!isStarted);
-      return true;
-    }
-    return false;
-  };
-
-  const isPath = (targetElement: any) => {
-    if (targetElement === 'path') {
-      return true;
-    }
-    return false;
-  };
-
-  const isWrong = (targetElement: any) => {
-    if (targetElement === 'wrong') {
-      return true;
-    }
-    return false;
-  };
-
-  const isCorrect = (targetElement: any) => {
-    if (targetElement === 'correct') {
       return true;
     }
     return false;
@@ -157,25 +139,6 @@ const GameBoard = () => {
     } else {
       return false;
     }
-  };
-
-  const swap = (
-    isDeadEnd: boolean,
-    originalElement: any,
-    targetElement: any,
-    action: String
-  ) => {
-    let tempElement = originalElement;
-    originalElement = targetElement;
-    targetElement = tempElement;
-
-    if (isDeadEnd) {
-      if (action === 'reverse') {
-        originalElement = 'wrong';
-      }
-    } else originalElement = 'correct';
-
-    return [originalElement, targetElement];
   };
 
   const dfsRunner = (mazeArray: any, mapNumber: number) => {
