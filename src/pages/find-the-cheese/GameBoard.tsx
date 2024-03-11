@@ -448,21 +448,21 @@ const GameBoard = () => {
           <div className='w-full'>
             {isStarted ? (
               <button
-                className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full'
+                className='bg-amber-500 hover:bg-amber-400 text-white font-bold py-2 px-4 rounded w-full'
                 onClick={() => handleClickReset()}
               >
                 Reset
               </button>
             ) : isGameSet ? 
             <button
-              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full'
+              className='bg-amber-500 hover:bg-amber-400 text-white font-bold py-2 px-4 rounded w-full'
               onClick={() => handleClickGameset()}
             >
               Gameset
             </button>
           : (
               <button
-                className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full'
+                className='bg-amber-500 hover:bg-amber-400 text-white font-bold py-2 px-4 rounded w-full'
                 onClick={() => handleClickStart(buttonNumber)}
               >
                 Start
@@ -479,7 +479,7 @@ const GameBoard = () => {
     return (
       <>
         <button
-          className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+          className='bg-amber-500 hover:bg-amber-400 text-white font-bold py-2 px-4 rounded'
           onMouseEnter={() => dfsRunner(mazeArray, runningMapIndex)}
         >
           DFS Runner
