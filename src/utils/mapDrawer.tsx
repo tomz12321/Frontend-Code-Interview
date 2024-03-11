@@ -1,5 +1,15 @@
 import Image from 'next/image';
 
+//Function to generate an array from 0 to i (maxLength)
+const arrayGenerator = (maxLength: number) => {
+  let createdArray = [];
+  for (let i = 0; i < maxLength; i++) {
+    createdArray.push(i);
+  }
+
+  return createdArray;
+};
+
 //Function to draw the block element
 const blockDrawer = (el: String) => {
     switch (el) {
@@ -44,4 +54,4 @@ const blockDrawer = (el: String) => {
     );
   };
 
-  export {lineDrawer, blockDrawer}
+  export {arrayGenerator, blockDrawer, lineDrawer}

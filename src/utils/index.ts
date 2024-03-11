@@ -1,5 +1,5 @@
 import getData from './api';
-import {lineDrawer, blockDrawer} from './mapDrawer';
+import { arrayGenerator, blockDrawer, lineDrawer } from './mapDrawer';
 import indexOf2d from './indexOf2d';
 
-export {getData, lineDrawer, blockDrawer, indexOf2d};
+export { getData, arrayGenerator, lineDrawer, blockDrawer, indexOf2d };

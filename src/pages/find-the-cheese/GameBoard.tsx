@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {getData, lineDrawer, indexOf2d} from '@/utils'
+import { getData, arrayGenerator, lineDrawer, indexOf2d } from '@/utils';
 
 const GameBoard = () => {
   const [mazeArray, setData] = useState<any[]>([]);
@@ -28,11 +28,11 @@ const GameBoard = () => {
   //Function to dataFetch
   const dataFetch = async () => {
     getData()
-      .then((response: { data: React.SetStateAction<any[]>; }) => {
+      .then((response: { data: React.SetStateAction<any[]> }) => {
         setData(response.data);
         setLoading(false);
       })
-      .catch((error: { message: any; }) => {
+      .catch((error: { message: any }) => {
         console.error('error: data fetching error', error.message);
       });
   };
@@ -178,16 +178,16 @@ const GameBoard = () => {
     return [originalElement, targetElement];
   };
 
-  const dfsRunner = (mazeArray: any,  mapNumber: number) => {
+  const dfsRunner = (mazeArray: any, mapNumber: number) => {
     try {
       if (isGoal(mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1])) {
         goLeft(mapNumber, [currPostion[0], currPostion[1]], 'left');
-        return
+        return;
       }
 
       if (isPath(mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1])) {
         goLeft(mapNumber, [currPostion[0], currPostion[1]], 'left');
-        return
+        return;
       }
     } catch (e) {
       console.log(e); //isOutOfBound
@@ -196,12 +196,12 @@ const GameBoard = () => {
     try {
       if (isGoal(mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]])) {
         goDown(mapNumber, [currPostion[0], currPostion[1]], 'down');
-        return
+        return;
       }
 
       if (isPath(mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]])) {
         goDown(mapNumber, [currPostion[0], currPostion[1]], 'down');
-        return
+        return;
       }
     } catch (e) {
       console.log(e); //isOutOfBound
@@ -210,12 +210,12 @@ const GameBoard = () => {
     try {
       if (isGoal(mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1])) {
         goRight(mapNumber, [currPostion[0], currPostion[1]], 'right');
-        return
+        return;
       }
 
       if (isPath(mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1])) {
         goRight(mapNumber, [currPostion[0], currPostion[1]], 'right');
-        return
+        return;
       }
     } catch (e) {
       console.log(e); //isOutOfBound
@@ -224,11 +224,11 @@ const GameBoard = () => {
     try {
       if (isGoal(mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]])) {
         goUp(mapNumber, [currPostion[0], currPostion[1]], 'up');
-        return
+        return;
       }
       if (isPath(mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]])) {
         goUp(mapNumber, [currPostion[0], currPostion[1]], 'up');
-        return
+        return;
       }
     } catch (e) {
       console.log(e); //isOutOfBound
@@ -238,7 +238,7 @@ const GameBoard = () => {
     try {
       if (isCorrect(mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]])) {
         goUp(mapNumber, [currPostion[0], currPostion[1]], 'up');
-        return
+        return;
       }
     } catch (e) {
       console.log(e); //isOutOfBound
@@ -248,7 +248,7 @@ const GameBoard = () => {
     try {
       if (isCorrect(mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1])) {
         goRight(mapNumber, [currPostion[0], currPostion[1]], 'right');
-        return
+        return;
       }
     } catch (e) {
       console.log(e); //isOutOfBound
@@ -258,7 +258,7 @@ const GameBoard = () => {
     try {
       if (isCorrect(mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]])) {
         goDown(mapNumber, [currPostion[0], currPostion[1]], 'down');
-        return
+        return;
       }
     } catch (e) {
       console.log(e); //isOutOfBound
@@ -268,7 +268,7 @@ const GameBoard = () => {
     try {
       if (isCorrect(mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1])) {
         goLeft(mapNumber, [currPostion[0], currPostion[1]], 'left');
-        return
+        return;
       }
     } catch (e) {
       console.log(e); //isOutOfBound
@@ -317,7 +317,7 @@ const GameBoard = () => {
       mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]] = swapResult[1];
     }
 
-    //Action: Update recordPositionX and recordPositionY and trigger re-render 
+    //Action: Update recordPositionX and recordPositionY and trigger re-render
     setRecordPositionX(currPostion[0] + 1);
     setRecordPositionY(currPostion[1]);
   };
@@ -364,7 +364,7 @@ const GameBoard = () => {
       mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1] = swapResult[1];
     }
 
-    //Action: Update recordPositionX and recordPositionY and trigger re-render 
+    //Action: Update recordPositionX and recordPositionY and trigger re-render
     setRecordPositionX(currPostion[0]);
     setRecordPositionY(currPostion[1] - 1);
   };
@@ -415,7 +415,7 @@ const GameBoard = () => {
       mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1] = swapResult[1];
     }
 
-    //Action: Update recordPositionX and recordPositionY and trigger re-render 
+    //Action: Update recordPositionX and recordPositionY and trigger re-render
     setRecordPositionX(currPostion[0]);
     setRecordPositionY(currPostion[1] + 1);
   };
@@ -462,60 +462,51 @@ const GameBoard = () => {
       mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]] = swapResult[1];
     }
 
-    //Action: Update recordPositionX and recordPositionY and trigger re-render 
+    //Action: Update recordPositionX and recordPositionY and trigger re-render
     setRecordPositionX(currPostion[0] - 1);
     setRecordPositionY(currPostion[1]);
   };
 
-  const arrayGenerator = (maxLength: number) => {
-    let createdArray = [];
-    for (let i = 0; i < maxLength; i++) {
-      createdArray.push(i);
-    }
-
-    return createdArray;
+  //Function to generate Start and Reset buttons
+  const buttonsGenerator = (buttonNumber: number) => {
+    return (
+      <>
+        <div className='blockContainer'>
+          <div className='w-full'>
+            {isStarted ? (
+              <button
+                className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full'
+                onClick={() => handleClickReset()}
+              >
+                Reset
+              </button>
+            ) : (
+              <button
+                className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full'
+                onClick={() => handleClickStart(buttonNumber - 1)}
+              >
+                Start
+              </button>
+            )}
+          </div>
+        </div>
+      </>
+    );
   };
 
-  //Function to generate Start and Reset buttons
-const buttonsGenerator = (buttonNumber: number) => {
-  return (
-    <>
-      <div className='blockContainer'>
-        <div className='w-full'>
-          {isStarted ? (
-            <button
-              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full'
-              onClick={() => handleClickReset()}
-            >
-              Reset
-            </button>
-          ) : (
-            <button
-              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full'
-              onClick={() => handleClickStart(buttonNumber - 1)}
-            >
-              Start
-            </button>
-          )}
-        </div>
-      </div>
-    </>
-  );
-};
-
-//Function to generate mouseEvent buttons
-const mouseEventButtonsGenerator = (runningMapIndex: number) => {
-  return (
-    <>
-      <button
-        className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-        onMouseEnter={() => dfsRunner(mazeArray, runningMapIndex)}
-      >
-        DFS Runner
-      </button>
-    </>
-  );
-};
+  //Function to generate mouseEvent buttons
+  const mouseEventButtonsGenerator = (runningMapIndex: number) => {
+    return (
+      <>
+        <button
+          className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+          onMouseEnter={() => dfsRunner(mazeArray, runningMapIndex)}
+        >
+          DFS Runner
+        </button>
+      </>
+    );
+  };
 
   useEffect(() => {
     dataFetch();
@@ -525,7 +516,7 @@ const mouseEventButtonsGenerator = (runningMapIndex: number) => {
   if (!mazeArray) return <p>No profile data</p>;
 
   //refresh currPostion
-  const currPostion = [recordPositionX, recordPositionY]
+  const currPostion = [recordPositionX, recordPositionY];
 
   return (
     <>
