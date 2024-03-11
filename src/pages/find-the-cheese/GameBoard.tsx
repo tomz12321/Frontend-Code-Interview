@@ -15,6 +15,7 @@ const GameBoard = () => {
   const [mazeArray, setData] = useState<any[]>([]);
   const [isLoading, setLoading] = useState(true);
   const [isStarted, setIsStarted] = useState(false);
+  const [isGameSet, setIsGameSet] = useState(false);
   const [recordPositionX, setRecordPositionX] = useState(0);
   const [recordPositionY, setRecordPositionY] = useState(0);
   const [runningMapIndex, setRunningMapIndex] = useState(0);
@@ -29,6 +30,11 @@ const GameBoard = () => {
     setRecordPositionX(currPostion[0]);
     setRecordPositionY(currPostion[1]);
     setRunningMapIndex(runningMapIndex);
+  };
+
+  const handleClickGameset = () => {
+    setIsGameSet(!isGameSet);
+    location.reload();
   };
 
   const handleClickReset = () => {
@@ -253,6 +259,7 @@ const GameBoard = () => {
     if (isGoal(mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]])) {
       mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]] = 'path';
       mazeArray[mapNumber][currPostion[0]][currPostion[1]] = 'start';
+      setIsGameSet(true)
     }
 
     //Validation: isDeadEnd
@@ -300,6 +307,7 @@ const GameBoard = () => {
     if (isGoal(mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1])) {
       mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1] = 'path';
       mazeArray[mapNumber][currPostion[0]][currPostion[1]] = 'start';
+      setIsGameSet(true)
     }
 
     //Validation: isDeadEnd
@@ -351,6 +359,7 @@ const GameBoard = () => {
     if (isGoal(mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1])) {
       mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1] = 'path';
       mazeArray[mapNumber][currPostion[0]][currPostion[1]] = 'start';
+      setIsGameSet(true)
     }
 
     //Validation: isDeadEnd
@@ -398,6 +407,7 @@ const GameBoard = () => {
     if (isGoal(mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]])) {
       mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]] = 'path';
       mazeArray[mapNumber][currPostion[0]][currPostion[1]] = 'start';
+      setIsGameSet(true)
     }
 
     //Validation: isDeadEnd
@@ -443,10 +453,17 @@ const GameBoard = () => {
               >
                 Reset
               </button>
-            ) : (
+            ) : isGameSet ? 
+            <button
+              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full'
+              onClick={() => handleClickGameset()}
+            >
+              Gameset
+            </button>
+          : (
               <button
                 className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full'
-                onClick={() => handleClickStart(buttonNumber - 1)}
+                onClick={() => handleClickStart(buttonNumber)}
               >
                 Start
               </button>
@@ -485,7 +502,7 @@ const GameBoard = () => {
     <>
       <div className='p-4 max-w-[720px] mx-auto bg-white rounded shadow'>
         {/* MouseEvent Buttons */}
-        {isStarted && runningMapIndex === 0
+        {isStarted && !isGameSet && runningMapIndex === 0
           ? mouseEventButtonsGenerator(0)
           : null}
 
@@ -493,73 +510,73 @@ const GameBoard = () => {
         {arrayGenerator(8).map((eleY) => {
           return lineDrawer(mazeArray, 0, eleY);
         })}
-        {buttonsGenerator(1)}
+        {buttonsGenerator(0)}
         <hr />
 
         {/* MouseEvent Buttons */}
-        {isStarted && runningMapIndex === 1
+        {isStarted && !isGameSet && runningMapIndex === 1
           ? mouseEventButtonsGenerator(1)
           : null}
         {/* Map2 */}
         {arrayGenerator(12).map((eleY) => {
           return lineDrawer(mazeArray, 1, eleY);
         })}
-        {buttonsGenerator(2)}
+        {buttonsGenerator(1)}
         <hr />
 
         {/* MouseEvent Buttons */}
-        {isStarted && runningMapIndex === 2
+        {isStarted && !isGameSet && runningMapIndex === 2
           ? mouseEventButtonsGenerator(2)
           : null}
         {/* Map3 */}
         {arrayGenerator(11).map((eleY) => {
           return lineDrawer(mazeArray, 2, eleY);
         })}
-        {buttonsGenerator(3)}
+        {buttonsGenerator(2)}
         <hr />
 
         {/* MouseEvent Buttons */}
-        {isStarted && runningMapIndex === 3
+        {isStarted && !isGameSet && runningMapIndex === 3
           ? mouseEventButtonsGenerator(3)
           : null}
         {/* Map4 */}
         {arrayGenerator(5).map((eleY) => {
           return lineDrawer(mazeArray, 3, eleY);
         })}
-        {buttonsGenerator(4)}
+        {buttonsGenerator(3)}
         <hr />
 
         {/* MouseEvent Buttons */}
-        {isStarted && runningMapIndex === 4
+        {isStarted && !isGameSet && runningMapIndex === 4
           ? mouseEventButtonsGenerator(4)
           : null}
         {/* Map5 */}
         {arrayGenerator(13).map((eleY) => {
           return lineDrawer(mazeArray, 4, eleY);
         })}
-        {buttonsGenerator(5)}
+        {buttonsGenerator(4)}
         <hr />
 
         {/* MouseEvent Buttons */}
-        {isStarted && runningMapIndex === 5
+        {isStarted && !isGameSet && runningMapIndex === 5
           ? mouseEventButtonsGenerator(5)
           : null}
         {/* Map6 */}
         {arrayGenerator(11).map((eleY) => {
           return lineDrawer(mazeArray, 5, eleY);
         })}
-        {buttonsGenerator(6)}
+        {buttonsGenerator(5)}
         <hr />
 
         {/* MouseEvent Buttons */}
-        {isStarted && runningMapIndex === 6
+        {isStarted && !isGameSet && runningMapIndex === 6
           ? mouseEventButtonsGenerator(6)
           : null}
         {/* Map7 */}
         {arrayGenerator(14).map((eleY) => {
           return lineDrawer(mazeArray, 6, eleY);
         })}
-        {buttonsGenerator(7)}
+        {buttonsGenerator(6)}
         <hr />
       </div>
     </>
