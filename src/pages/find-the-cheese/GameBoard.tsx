@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import {getData, lineDrawer, indexOf2d} from '@/utils'
 
-const DrawTheMap = () => {
+const GameBoard = () => {
   const [mazeArray, setData] = useState<any[]>([]);
   const [isLoading, setLoading] = useState(true);
   const [isStarted, setIsStarted] = useState(false);
@@ -26,189 +25,14 @@ const DrawTheMap = () => {
     location.reload();
   };
 
-  const dfsRunner = (mapNumber: number) => {
-    try {
-      if (isGoal(mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1])) {
-        goLeft(mapNumber, [currPostion[0], currPostion[1]], 'left');
-        return
-      }
-
-      if (isPath(mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1])) {
-        goLeft(mapNumber, [currPostion[0], currPostion[1]], 'left');
-        return
-      }
-    } catch (e) {
-      console.log(e); //isOutOfBound
-    }
-
-    try {
-      if (isGoal(mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]])) {
-        goDown(mapNumber, [currPostion[0], currPostion[1]], 'down');
-        return
-      }
-
-      if (isPath(mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]])) {
-        goDown(mapNumber, [currPostion[0], currPostion[1]], 'down');
-        return
-      }
-    } catch (e) {
-      console.log(e); //isOutOfBound
-    }
-
-    try {
-      if (isGoal(mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1])) {
-        goRight(mapNumber, [currPostion[0], currPostion[1]], 'right');
-        return
-      }
-
-      if (isPath(mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1])) {
-        goRight(mapNumber, [currPostion[0], currPostion[1]], 'right');
-        return
-      }
-    } catch (e) {
-      console.log(e); //isOutOfBound
-    }
-
-    try {
-      if (isGoal(mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]])) {
-        goUp(mapNumber, [currPostion[0], currPostion[1]], 'up');
-        return
-      }
-      if (isPath(mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]])) {
-        goUp(mapNumber, [currPostion[0], currPostion[1]], 'up');
-        return
-      }
-    } catch (e) {
-      console.log(e); //isOutOfBound
-    }
-
-    //Try Reverse and go up
-    try {
-      if (isCorrect(mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]])) {
-        goUp(mapNumber, [currPostion[0], currPostion[1]], 'up');
-        return
-      }
-    } catch (e) {
-      console.log(e); //isOutOfBound
-    }
-
-    //Try Reverse and go right
-    try {
-      if (isCorrect(mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1])) {
-        goRight(mapNumber, [currPostion[0], currPostion[1]], 'right');
-        return
-      }
-    } catch (e) {
-      console.log(e); //isOutOfBound
-    }
-
-    //Try Reverse back and go down
-    try {
-      if (isCorrect(mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]])) {
-        goDown(mapNumber, [currPostion[0], currPostion[1]], 'down');
-        return
-      }
-    } catch (e) {
-      console.log(e); //isOutOfBound
-    }
-
-    //Try Reverse and go left
-    try {
-      if (isCorrect(mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1])) {
-        goLeft(mapNumber, [currPostion[0], currPostion[1]], 'left');
-        return
-      }
-    } catch (e) {
-      console.log(e); //isOutOfBound
-    }
-  };
-
-  //Function to draw the block element
-  const draw = (el: String) => {
-    switch (el) {
-      case 'wall':
-        return <div className='bg-green-800 md:w-16 md:h-16'></div>;
-        break;
-      case 'path':
-        return <div className='bg-lime-50 md:w-16 md:h-16'></div>;
-        break;
-      case 'correct':
-        return <div className='bg-amber-200 md:w-16 md:h-16'></div>;
-        break;
-      case 'wrong':
-        return <div className='bg-black md:w-16 md:h-16'></div>;
-        break;
-      case 'start':
-        return (
-          <div className='bg-neutral-500'>
-            <Image src='/LuRat.png' width={64} height={64} alt='Rat' />
-          </div>
-        );
-        break;
-      case 'end':
-        return (
-          <div className='bg-amber-400'>
-            <Image src='/FaCheese.png' width={64} height={64} alt='Cheese' />
-          </div>
-        );
-        break;
-      default:
-        return <div className='bg-white md:w-16 md:h-16'></div>;
-    }
-  };
-
-  //Function to draw a line with block elements
-  const lineDrawer = (eleX: number, eleY: number) => {
-    let result = [];
-    let element = mazeArray[eleX][eleY];
-
-    for (let i = 0; i < element.length; i++) {
-      result.push(draw(element[i]));
-    }
-
-    return (
-      <div className='squareContainer' key={`${eleX}+','+${eleY}`}>
-        {result}
-      </div>
-    );
-  };
-
-  //Function to generateButton
-  const generateButton = (buttonNumber: number) => {
-    return (
-      <>
-        <div className='squareContainer'>
-          <div className='w-full'>
-            {isStarted ? (
-              <button
-                className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full'
-                onClick={() => handleClickReset()}
-              >
-                {`Reset ${buttonNumber}`}
-              </button>
-            ) : (
-              <button
-                className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full'
-                onClick={() => handleClickStart(buttonNumber - 1)}
-              >
-                {`Start ${buttonNumber}`}
-              </button>
-            )}
-          </div>
-        </div>
-      </>
-    );
-  };
-
   //Function to dataFetch
   const dataFetch = async () => {
-    await axios
-      .get('/api/maze')
-      .then((response) => {
+    getData()
+      .then((response: { data: React.SetStateAction<any[]>; }) => {
         setData(response.data);
         setLoading(false);
       })
-      .catch((error) => {
+      .catch((error: { message: any; }) => {
         console.error('error: data fetching error', error.message);
       });
   };
@@ -354,25 +178,101 @@ const DrawTheMap = () => {
     return [originalElement, targetElement];
   };
 
-  const indexOf2d = (arr: any[], val: string) => {
-    var index = [-1, -1];
-    if (!Array.isArray(arr)) {
-      return index;
-    }
-    arr.some(function (sub, posX) {
-      if (!Array.isArray(sub)) {
-        return false;
+  const dfsRunner = (mazeArray: any,  mapNumber: number) => {
+    try {
+      if (isGoal(mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1])) {
+        goLeft(mapNumber, [currPostion[0], currPostion[1]], 'left');
+        return
       }
-      var posY = sub.indexOf(val);
-      if (posY !== -1) {
-        index[0] = posX;
-        index[1] = posY;
-        return true;
-      }
-      return false;
-    });
 
-    return index;
+      if (isPath(mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1])) {
+        goLeft(mapNumber, [currPostion[0], currPostion[1]], 'left');
+        return
+      }
+    } catch (e) {
+      console.log(e); //isOutOfBound
+    }
+
+    try {
+      if (isGoal(mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]])) {
+        goDown(mapNumber, [currPostion[0], currPostion[1]], 'down');
+        return
+      }
+
+      if (isPath(mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]])) {
+        goDown(mapNumber, [currPostion[0], currPostion[1]], 'down');
+        return
+      }
+    } catch (e) {
+      console.log(e); //isOutOfBound
+    }
+
+    try {
+      if (isGoal(mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1])) {
+        goRight(mapNumber, [currPostion[0], currPostion[1]], 'right');
+        return
+      }
+
+      if (isPath(mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1])) {
+        goRight(mapNumber, [currPostion[0], currPostion[1]], 'right');
+        return
+      }
+    } catch (e) {
+      console.log(e); //isOutOfBound
+    }
+
+    try {
+      if (isGoal(mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]])) {
+        goUp(mapNumber, [currPostion[0], currPostion[1]], 'up');
+        return
+      }
+      if (isPath(mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]])) {
+        goUp(mapNumber, [currPostion[0], currPostion[1]], 'up');
+        return
+      }
+    } catch (e) {
+      console.log(e); //isOutOfBound
+    }
+
+    //Try Reverse and go up
+    try {
+      if (isCorrect(mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]])) {
+        goUp(mapNumber, [currPostion[0], currPostion[1]], 'up');
+        return
+      }
+    } catch (e) {
+      console.log(e); //isOutOfBound
+    }
+
+    //Try Reverse and go right
+    try {
+      if (isCorrect(mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1])) {
+        goRight(mapNumber, [currPostion[0], currPostion[1]], 'right');
+        return
+      }
+    } catch (e) {
+      console.log(e); //isOutOfBound
+    }
+
+    //Try Reverse back and go down
+    try {
+      if (isCorrect(mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]])) {
+        goDown(mapNumber, [currPostion[0], currPostion[1]], 'down');
+        return
+      }
+    } catch (e) {
+      console.log(e); //isOutOfBound
+    }
+
+    //Try Reverse and go left
+    try {
+      if (isCorrect(mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1])) {
+        goLeft(mapNumber, [currPostion[0], currPostion[1]], 'left');
+        return
+      }
+    } catch (e) {
+      console.log(e); //isOutOfBound
+    }
   };
 
   const goDown = (mapNumber: number, currPostion: number[], action: string) => {
@@ -401,7 +301,7 @@ const DrawTheMap = () => {
         'reverse'
       );
 
-      //assign value
+      //Action: Assign value
       mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
       mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]] = swapResult[1];
     } else {
@@ -412,11 +312,12 @@ const DrawTheMap = () => {
         'forward'
       );
 
-      //assign value
+      //Action: Assign value
       mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
       mazeArray[mapNumber][currPostion[0] + 1][currPostion[1]] = swapResult[1];
     }
 
+    //Action: Update recordPositionX and recordPositionY and trigger re-render 
     setRecordPositionX(currPostion[0] + 1);
     setRecordPositionY(currPostion[1]);
   };
@@ -447,7 +348,7 @@ const DrawTheMap = () => {
         'reverse'
       );
 
-      //assign value
+      //Action: Assign value
       mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
       mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1] = swapResult[1];
     } else {
@@ -458,11 +359,12 @@ const DrawTheMap = () => {
         'forward'
       );
 
-      //assign value
+      //Action: Assign value
       mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
       mazeArray[mapNumber][currPostion[0]][currPostion[1] - 1] = swapResult[1];
     }
 
+    //Action: Update recordPositionX and recordPositionY and trigger re-render 
     setRecordPositionX(currPostion[0]);
     setRecordPositionY(currPostion[1] - 1);
   };
@@ -497,7 +399,7 @@ const DrawTheMap = () => {
         'reverse'
       );
 
-      //assign value
+      //Action: Assign value
       mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
       mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1] = swapResult[1];
     } else {
@@ -508,12 +410,12 @@ const DrawTheMap = () => {
         'forward'
       );
 
-      //assign value
+      //Action: Assign value
       mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
       mazeArray[mapNumber][currPostion[0]][currPostion[1] + 1] = swapResult[1];
     }
 
-
+    //Action: Update recordPositionX and recordPositionY and trigger re-render 
     setRecordPositionX(currPostion[0]);
     setRecordPositionY(currPostion[1] + 1);
   };
@@ -544,7 +446,7 @@ const DrawTheMap = () => {
         'reverse'
       );
 
-      //assign value
+      //Action: Assign value
       mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
       mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]] = swapResult[1];
     } else {
@@ -555,11 +457,12 @@ const DrawTheMap = () => {
         'forward'
       );
 
-      //assign value
+      //Action: Assign value
       mazeArray[mapNumber][currPostion[0]][currPostion[1]] = swapResult[0];
       mazeArray[mapNumber][currPostion[0] - 1][currPostion[1]] = swapResult[1];
     }
 
+    //Action: Update recordPositionX and recordPositionY and trigger re-render 
     setRecordPositionX(currPostion[0] - 1);
     setRecordPositionY(currPostion[1]);
   };
@@ -573,18 +476,46 @@ const DrawTheMap = () => {
     return createdArray;
   };
 
-  const arrowKeyButtonsGenerator = (runningMapIndex: number) => {
-    return (
-      <>
-        <button
-          className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-          onMouseEnter={() => dfsRunner(runningMapIndex)}
-        >
-          DFS Runner
-        </button>
-      </>
-    );
-  };
+  //Function to generate Start and Reset buttons
+const buttonsGenerator = (buttonNumber: number) => {
+  return (
+    <>
+      <div className='blockContainer'>
+        <div className='w-full'>
+          {isStarted ? (
+            <button
+              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full'
+              onClick={() => handleClickReset()}
+            >
+              Reset
+            </button>
+          ) : (
+            <button
+              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full'
+              onClick={() => handleClickStart(buttonNumber - 1)}
+            >
+              Start
+            </button>
+          )}
+        </div>
+      </div>
+    </>
+  );
+};
+
+//Function to generate mouseEvent buttons
+const mouseEventButtonsGenerator = (runningMapIndex: number) => {
+  return (
+    <>
+      <button
+        className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+        onMouseEnter={() => dfsRunner(mazeArray, runningMapIndex)}
+      >
+        DFS Runner
+      </button>
+    </>
+  );
+};
 
   useEffect(() => {
     dataFetch();
@@ -593,91 +524,92 @@ const DrawTheMap = () => {
   if (isLoading) return <p>Loading...</p>;
   if (!mazeArray) return <p>No profile data</p>;
 
-  let currPostion = indexOf2d(mazeArray[runningMapIndex], 'start');
+  //refresh currPostion
+  const currPostion = [recordPositionX, recordPositionY]
 
   return (
     <>
       <div className='p-4 max-w-[720px] mx-auto bg-white rounded shadow'>
-        {/* Arrow Key Buttons */}
+        {/* MouseEvent Buttons */}
         {isStarted && runningMapIndex === 0
-          ? arrowKeyButtonsGenerator(0)
+          ? mouseEventButtonsGenerator(0)
           : null}
 
         {/* Map1 */}
         {arrayGenerator(8).map((eleY) => {
-          return lineDrawer(0, eleY);
+          return lineDrawer(mazeArray, 0, eleY);
         })}
-        {generateButton(1)}
+        {buttonsGenerator(1)}
         <hr />
 
-        {/* Arrow Key Buttons */}
+        {/* MouseEvent Buttons */}
         {isStarted && runningMapIndex === 1
-          ? arrowKeyButtonsGenerator(1)
+          ? mouseEventButtonsGenerator(1)
           : null}
         {/* Map2 */}
         {arrayGenerator(12).map((eleY) => {
-          return lineDrawer(1, eleY);
+          return lineDrawer(mazeArray, 1, eleY);
         })}
-        {generateButton(2)}
+        {buttonsGenerator(2)}
         <hr />
 
-        {/* Arrow Key Buttons */}
+        {/* MouseEvent Buttons */}
         {isStarted && runningMapIndex === 2
-          ? arrowKeyButtonsGenerator(2)
+          ? mouseEventButtonsGenerator(2)
           : null}
         {/* Map3 */}
         {arrayGenerator(11).map((eleY) => {
-          return lineDrawer(2, eleY);
+          return lineDrawer(mazeArray, 2, eleY);
         })}
-        {generateButton(3)}
+        {buttonsGenerator(3)}
         <hr />
 
-        {/* Arrow Key Buttons */}
+        {/* MouseEvent Buttons */}
         {isStarted && runningMapIndex === 3
-          ? arrowKeyButtonsGenerator(3)
+          ? mouseEventButtonsGenerator(3)
           : null}
         {/* Map4 */}
         {arrayGenerator(5).map((eleY) => {
-          return lineDrawer(3, eleY);
+          return lineDrawer(mazeArray, 3, eleY);
         })}
-        {generateButton(4)}
+        {buttonsGenerator(4)}
         <hr />
 
-        {/* Arrow Key Buttons */}
+        {/* MouseEvent Buttons */}
         {isStarted && runningMapIndex === 4
-          ? arrowKeyButtonsGenerator(4)
+          ? mouseEventButtonsGenerator(4)
           : null}
         {/* Map5 */}
         {arrayGenerator(13).map((eleY) => {
-          return lineDrawer(4, eleY);
+          return lineDrawer(mazeArray, 4, eleY);
         })}
-        {generateButton(5)}
+        {buttonsGenerator(5)}
         <hr />
 
-        {/* Arrow Key Buttons */}
+        {/* MouseEvent Buttons */}
         {isStarted && runningMapIndex === 5
-          ? arrowKeyButtonsGenerator(5)
+          ? mouseEventButtonsGenerator(5)
           : null}
         {/* Map6 */}
         {arrayGenerator(11).map((eleY) => {
-          return lineDrawer(5, eleY);
+          return lineDrawer(mazeArray, 5, eleY);
         })}
-        {generateButton(6)}
+        {buttonsGenerator(6)}
         <hr />
 
-        {/* Arrow Key Buttons */}
+        {/* MouseEvent Buttons */}
         {isStarted && runningMapIndex === 6
-          ? arrowKeyButtonsGenerator(6)
+          ? mouseEventButtonsGenerator(6)
           : null}
         {/* Map7 */}
         {arrayGenerator(14).map((eleY) => {
-          return lineDrawer(6, eleY);
+          return lineDrawer(mazeArray, 6, eleY);
         })}
-        {generateButton(7)}
+        {buttonsGenerator(7)}
         <hr />
       </div>
     </>
   );
 };
 
-export default DrawTheMap;
+export default GameBoard;

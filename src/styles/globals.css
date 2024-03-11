@@ -2,12 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-.square {
+.block {
   height: 100px;
   width: 100px;
 }
 
-.squareContainer {
+.blockContainer {
   background-color: black;
   display: flex;
   justify-content: center;

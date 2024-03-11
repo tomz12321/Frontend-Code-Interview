@@ -1,5 +1,5 @@
 import LayoutComponent from '../../layout/Layout';
-import DrawTheMap from './DrawTheMap.tsx';
+import GameBoard from './GameBoard.tsx';
 
 export default function Home() {
   return (
@@ -10,7 +10,7 @@ export default function Home() {
           {"Click 'Start' to see how the mouse find the cheese by using DFS!"}
         </p>
         <p> Testing Page </p>
-        <DrawTheMap />
+        <GameBoard />
       </LayoutComponent>
     </>
   );
