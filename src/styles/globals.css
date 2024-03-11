@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.block {
+  height: 100px;
+  width: 100px;
+}
+
+.blockContainer {
+  background-color: black;
+  display: flex;
+  justify-content: center;
+}
