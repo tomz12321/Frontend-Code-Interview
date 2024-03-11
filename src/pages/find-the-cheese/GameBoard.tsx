@@ -482,7 +482,7 @@ const GameBoard = () => {
           className='bg-amber-500 hover:bg-amber-400 text-white font-bold py-2 px-4 rounded'
           onMouseEnter={() => dfsRunner(mazeArray, runningMapIndex)}
         >
-          DFS Runner
+          DFS Runner (Hover on me!)
         </button>
       </>
     );
@@ -501,6 +501,20 @@ const GameBoard = () => {
   return (
     <>
       <div className='p-4 max-w-[720px] mx-auto bg-white rounded shadow'>
+        <h1 className='font-bold text-7xl text-center text-white'>
+          {'DEMO PAGE'}
+        </h1>
+        <hr/>
+        <p> - What we achieve here: </p>
+        <li>Find the Cheese.</li>
+        <li>
+          {
+            "Click 'Start' and Use the 'Mouse Cursor' to hover on the DFS Runner button and see how the mouse find the cheese by using DFS!"
+          }
+        </li>
+        <li>This is our demo page. </li>
+        
+
         {/* MouseEvent Buttons */}
         {isStarted && !isGameSet && runningMapIndex === 0
           ? mouseEventButtonsGenerator(0)

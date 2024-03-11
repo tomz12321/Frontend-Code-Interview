@@ -6,6 +6,9 @@ export default function Home() {
     <Layout>
       <main className='bg-amber-50 p-4 min-h-screen'>
         <div className='p-4 max-w-[720px] mx-auto bg-white rounded shadow'>
+          <h1 className='font-bold text-7xl text-center text-white'>
+            {'This is requirement!'}
+          </h1>
           <h1 className='font-bold text-4xl text-center'>
             Frontend Engineer Assessment
           </h1>
