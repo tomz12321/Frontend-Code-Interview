@@ -20,7 +20,7 @@ const blockDrawer = (el: String) => {
       case 'correct':
         return <div className='bg-amber-200 md:w-16 md:h-16'></div>;
       case 'wrong':
-        return <div className='bg-black md:w-16 md:h-16'></div>;
+        return <div className='bg-lime-50 md:w-16 md:h-16'></div>;
       case 'start':
         return (
           <div className='bg-neutral-500'>
