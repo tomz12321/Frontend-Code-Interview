@@ -1,17 +1,24 @@
-import LayoutComponent from '../../layout/Layout';
+import Layout from '../../layout';
 import GameBoard from './GameBoard.tsx';
 
-export default function Home() {
+const FindTheCheese = () => {
   return (
     <>
-      <LayoutComponent>
-        <header>Find the Cheese</header>
-        <p>
-          {"Click 'Start' to see how the mouse find the cheese by using DFS!"}
-        </p>
-        <p> Testing Page </p>
+      <Layout>
+      <div className='p-4 max-w-[720px] mx-auto bg-white rounded shadow'>
+        <p> What we achieve here: </p>
+        <li>Find the Cheese:</li>
+        <li>
+          {
+            "Click 'Start' and Use the 'Mouse Cursor' to move on the DFS Runner button and see how the mouse find the cheese by using DFS!"
+          }
+        </li>
+        <li>This is our demo page. </li>
+        </div>
         <GameBoard />
-      </LayoutComponent>
+      </Layout>
     </>
   );
-}
+};
+
+export default FindTheCheese;
